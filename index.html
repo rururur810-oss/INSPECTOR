@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspector VPN — Кибернетическая анонимность и безопасность</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#030712',
+                            card: '#0b0f19',
+                            border: '#1e293b',
+                            cyan: '#06b6d4',
+                            violet: '#8b5cf6',
+                            accent: '#3b82f6',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.35);
+        }
+        .glow-violet {
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.35);
+        }
+        .text-glow-cyan {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+        }
+        .text-glow-violet {
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+        }
+        .cyber-grid {
+            background-image: linear-gradient(to right, rgba(30, 41, 59, 0.3) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(30, 41, 59, 0.3) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .glass-panel {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 41, 59, 0.8);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-cyber-dark cyber-grid min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+
+    <!-- Custom Modal Box -->
+    <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel p-6 rounded-2xl max-w-md w-full mx-4 border border-cyan-500/50 glow-cyan text-center">
+            <div id="modal-icon" class="text-4xl text-cyan-400 mb-3"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3 id="modal-title" class="text-xl font-bold text-white mb-2">Системное уведомление</h3>
+            <p id="modal-message" class="text-gray-300 text-sm mb-6">Сообщение...</p>
+            <button onclick="closeModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-black font-bold uppercase tracking-wider hover:opacity-95 transition">
+                Понятно
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-panel border-b border-gray-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-violet-600 flex items-center justify-center glow-cyan group-hover:scale-105 transition">
+                    <i class="fa-solid fa-fingerprint text-black text-xl font-black"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-black tracking-wider text-white uppercase flex items-center gap-1.5">
+                        INSPECTOR <span class="text-cyan-400 text-xs px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/30">VPN v3.0</span>
+                    </span>
+                    <span class="text-[10px] text-gray-400 tracking-widest uppercase">Cyber Intelligence Protocol</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#features" class="text-gray-300 hover:text-cyan-400 transition">Преимущества</a>
+                <a href="#status" class="text-gray-300 hover:text-cyan-400 transition">Статус сети</a>
+                <a href="#pricing" class="text-gray-300 hover:text-cyan-400 transition">Тарифы</a>
+                <a href="#downloads" class="text-gray-300 hover:text-cyan-400 transition">Скачать</a>
+                <a href="#faq" class="text-gray-300 hover:text-cyan-400 transition">FAQ</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="hidden sm:flex items-center space-x-4">
+                <button onclick="openModal('Личный кабинет', 'Авторизация клиентов доступна в мобильном приложении Inspector.')" class="text-sm font-semibold text-gray-300 hover:text-white px-4 py-2 transition">
+                    Войти
+                </button>
+                <button onclick="scrollToSection('pricing')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-black font-bold text-sm tracking-wide glow-cyan hover:glow-violet hover:scale-105 transition">
+                    Подключить VPN
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button onclick="toggleMobileMenu()" class="md:hidden text-gray-300 hover:text-white text-2xl focus:outline-none">
+                <i class="fa-solid fa-bars" id="mobile-menu-icon"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden glass-panel border-b border-gray-800 px-6 py-4 space-y-4">
+            <a href="#features" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-cyan-400">Преимущества</a>
+            <a href="#status" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-cyan-400">Статус сети</a>
+            <a href="#pricing" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-cyan-400">Тарифы</a>
+            <a href="#downloads" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-cyan-400">Скачать</a>
+            <a href="#faq" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-cyan-400">FAQ</a>
+            <div class="pt-4 border-t border-gray-800 flex flex-col space-y-3">
+                <button onclick="openModal('Личный кабинет', 'Авторизация в разработке.')" class="w-full py-2.5 rounded-xl border border-gray-700 text-center font-semibold">Войти</button>
+                <button onclick="scrollToSection('pricing')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-black font-bold text-center">Подключить</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section with Interactive Status Animation -->
+    <section class="relative pt-32 pb-20 lg:pt-44 lg:pb-32 flex items-center justify-center overflow-hidden">
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-1/3 left-1/4 w-80 h-80 bg-violet-600/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Left text column -->
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-400 text-xs font-semibold uppercase tracking-widest mb-6 glow-cyan">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        <span>Протоколы VLESS Reality & WireGuard</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white mb-6 leading-tight">
+                        Полная свобода и безопасность с <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 text-glow-cyan">Inspector VPN</span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-gray-400 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                        Обходите любые сетевые ограничения без потери скорости. Передовые детективные технологии шифрования гарантируют 100% анонимность вашей цифровой активности.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
+                        <button onclick="scrollToSection('pricing')" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-600 text-black font-black uppercase tracking-wider text-sm glow-cyan hover:glow-violet hover:scale-105 transition flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-shield text-lg"></i> Получить ключ
+                        </button>
+                        <button onclick="scrollToSection('downloads')" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass-panel border border-cyan-500/40 text-cyan-400 font-bold uppercase tracking-wider text-sm hover:bg-cyan-950/30 transition flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-download text-lg"></i> Скачать клиент
+                        </button>
+                    </div>
+
+                    <!-- Trust indicators -->
+                    <div class="flex items-center justify-center lg:justify-start gap-6 text-sm text-gray-400">
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"><span>Без логирования</span></i></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"><span>До 10 устройств</span></i></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"><span>Поддержка 24/7</span></i></div>
+                    </div>
+                </div>
+
+                <!-- Right interactive Live Status Card -->
+                <div class="lg:col-span-5">
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-cyan-500/30 glow-cyan relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                        <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-800">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping" id="status-dot"></div>
+                                <span class="font-bold uppercase tracking-wider text-sm text-white" id="connection-state-text">Защищено &middot; 45+ узлов</span>
+                            </div>
+                            <span class="text-xs px-2.5 py-1 rounded-md bg-cyan-950 text-cyan-400 font-mono border border-cyan-500/30">VLESS-REALITY</span>
+                        </div>
+
+                        <!-- Interactive Connection Orb Animation -->
+                        <div class="flex flex-col items-center justify-center py-6">
+                            <div class="relative w-40 h-40 flex items-center justify-center cursor-pointer group" onclick="toggleConnection()">
+                                <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-pulse-ring"></div>
+                                <div class="absolute inset-4 rounded-full bg-violet-600/20 animate-pulse-ring" style="animation-delay: 1s;"></div>
+                                <div id="orb-button" class="w-28 h-28 rounded-2xl bg-gradient-to-tr from-cyan-500 to-violet-600 flex flex-col items-center justify-center text-black shadow-2xl transition group-hover:scale-105">
+                                    <i id="orb-icon" class="fa-solid fa-power-off text-3xl mb-1"></i>
+                                    <span id="orb-label" class="text-xs font-black uppercase tracking-wider">Подключено</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-4 text-center">Нажмите для переключения тестового статуса</p>
+                        </div>
+
+                        <!-- Live Metrics -->
+                        <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-800">
+                            <div class="bg-gray-900/60 p-3.5 rounded-xl border border-gray-800">
+                                <div class="text-xs text-gray-400 mb-1">IP-Адрес</div>
+                                <div id="metric-ip" class="font-mono text-xs text-cyan-400 font-bold">185.220.101.42</div>
+                            </div>
+                            <div class="bg-gray-900/60 p-3.5 rounded-xl border border-gray-800">
+                                <div class="text-xs text-gray-400 mb-1">Пинг (Латентность)</div>
+                                <div id="metric-ping" class="font-mono text-xs text-emerald-400 font-bold">14 мс</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-cyan-400 font-bold text-xs uppercase tracking-widest mb-3">Детективные технологии</h2>
+                <h3 class="text-3xl sm:text-4xl font-black text-white uppercase">Преимущества Inspector VPN</h3>
+                <div class="w-20 h-1 bg-gradient-to-r from-cyan-500 to-violet-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Feature 1 -->
+                <div class="glass-panel p-8 rounded-2xl border border-gray-800 hover:border-cyan-500/50 transition group hover:glow-cyan">
+                    <div class="w-14 h-14 rounded-xl bg-cyan-950/80 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Высокая скорость</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Выделенные порты до 10 Гбит/с без каких-либо ограничений трафика. Мгновенная загрузка файлов и видео в 4K.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-panel p-8 rounded-2xl border border-gray-800 hover:border-violet-500/50 transition group hover:glow-violet">
+                    <div class="w-14 h-14 rounded-xl bg-violet-950/80 border border-violet-500/30 flex items-center justify-center text-violet-400 text-2xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-user-secret"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Строго без логов</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Мы не собираем, не храним и не передаем ваши личные данные третьим лицам. Ваша конфиденциальность защищена законом.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-panel p-8 rounded-2xl border border-gray-800 hover:border-cyan-500/50 transition group hover:glow-cyan">
+                    <div class="w-14 h-14 rounded-xl bg-cyan-950/80 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-unlock-keyhole"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Обход блокировок</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Передовые протоколы маскируют VPN-трафик под обычные посещения сайтов, делая его абсолютно невидимым для систем DPI.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="glass-panel p-8 rounded-2xl border border-gray-800 hover:border-violet-500/50 transition group hover:glow-violet">
+                    <div class="w-14 h-14 rounded-xl bg-violet-950/80 border border-violet-500/30 flex items-center justify-center text-violet-400 text-2xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-devices"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Мульти-устройства</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Один ключ активен одновременно на 10 устройствах: Windows, macOS, iOS, Android, Linux и роутерах.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Network Status Section -->
+    <section id="status" class="py-20 relative bg-black/40 border-y border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-12">
+                <div>
+                    <h2 class="text-cyan-400 font-bold text-xs uppercase tracking-widest mb-2">Глобальная сеть</h2>
+                    <h3 class="text-2xl sm:text-3xl font-black text-white uppercase">Статус серверов Inspector</h3>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center gap-3">
+                    <span class="px-3 py-1.5 rounded-lg bg-emerald-950/80 text-emerald-400 text-xs font-bold border border-emerald-500/30 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Все системы работают штатно
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-panel p-5 rounded-xl border border-gray-800 flex items-center justify-between">
+                    <div>
+                        <div class="text-white font-bold mb-1">Нидерланды (AMS-1)</div>
+                        <div class="text-xs text-emerald-400">Онлайн &middot; 99.9% аптайм</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-mono text-cyan-400">12 мс</span>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 rounded-xl border border-gray-800 flex items-center justify-between">
+                    <div>
+                        <div class="text-white font-bold mb-1">Германия (FRA-2)</div>
+                        <div class="text-xs text-emerald-400">Онлайн &middot; 100% аптайм</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-mono text-cyan-400">16 мс</span>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 rounded-xl border border-gray-800 flex items-center justify-between">
+                    <div>
+                        <div class="text-white font-bold mb-1">Турция (IST-1)</div>
+                        <div class="text-xs text-emerald-400">Онлайн &middot; 99.8% аптайм</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-mono text-cyan-400">28 мс</span>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 rounded-xl border border-gray-800 flex items-center justify-between">
+                    <div>
+                        <div class="text-white font-bold mb-1">Казахстан (ALA-1)</div>
+                        <div class="text-xs text-emerald-400">Онлайн &middot; 99.9% аптайм</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-mono text-cyan-400">35 мс</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-cyan-400 font-bold text-xs uppercase tracking-widest mb-3">Инвестиции в безопасность</h2>
+                <h3 class="text-3xl sm:text-4xl font-black text-white uppercase">Тарифные планы</h3>
+                <div class="w-20 h-1 bg-gradient-to-r from-cyan-500 to-violet-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Plan 1 -->
+                <div class="glass-panel p-8 rounded-3xl border border-gray-800 flex flex-col justify-between hover:border-cyan-500/50 transition">
+                    <div>
+                        <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Старт</div>
+                        <div class="text-3xl font-black text-white mb-4">1 мес</div>
+                        <div class="text-4xl font-black text-cyan-400 mb-6">290 ₽ <span class="text-xs text-gray-400 font-normal">/ месяц</span></div>
+                        <ul class="space-y-3 text-sm text-gray-300 mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> Безлимитный трафик</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> Скорость до 1 Гбит/с</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> До 5 устройств</li>
+                            <li class="flex items-center gap-2 text-gray-500"><i class="fa-solid fa-xmark"></i> Выделенный IP</li>
+                        </ul>
+                    </div>
+                    <button onclick="openModal('Выбор тарифа', 'Тариф на 1 месяц успешно выбран. Перенаправление на оплату...')" class="w-full py-3.5 rounded-xl border border-cyan-500/50 text-cyan-400 font-bold uppercase tracking-wider hover:bg-cyan-500/10 transition">
+                        Выбрать тариф
+                    </button>
+                </div>
+
+                <!-- Plan 2 (Popular) -->
+                <div class="glass-panel p-8 rounded-3xl border border-cyan-500 glow-cyan flex flex-col justify-between relative transform lg:-translate-y-4">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-cyan-500 to-violet-600 text-black text-xs font-black uppercase tracking-wider">
+                        Популярный выбор
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-cyan-400 uppercase tracking-widest mb-2">Агент (6 месяцев)</div>
+                        <div class="text-3xl font-black text-white mb-4">6 мес</div>
+                        <div class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400 mb-6">1490 ₽ <span class="text-xs text-gray-400 font-normal">(~248 ₽/мес)</span></div>
+                        <ul class="space-y-3 text-sm text-gray-300 mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> Безлимитный трафик</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> Скорость до 10 Гбит/с</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> До 10 устройств</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> Приоритетная поддержка</li>
+                        </ul>
+                    </div>
+                    <button onclick="openModal('Выбор тарифа', 'Тариф Агент (6 мес) выбран. Перенаправление на оплату...')" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-black font-black uppercase tracking-wider hover:opacity-95 transition shadow-lg">
+                        Подключить Агент
+                    </button>
+                </div>
+
+                <!-- Plan 3 -->
+                <div class="glass-panel p-8 rounded-3xl border border-gray-800 flex flex-col justify-between hover:border-violet-500/50 transition">
+                    <div>
+                        <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Генеральный инспектор</div>
+                        <div class="text-3xl font-black text-white mb-4">1 год</div>
+                        <div class="text-4xl font-black text-violet-400 mb-6">2490 ₽ <span class="text-xs text-gray-400 font-normal">(~207 ₽/мес)</span></div>
+                        <ul class="space-y-3 text-sm text-gray-300 mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-violet-400"></i> Максимальная скорость</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-violet-400"></i> Все локации мира</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-violet-400"></i> Персональный IP-адрес</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-violet-400"></i> VIP поддержка 24/7</li>
+                        </ul>
+                    </div>
+                    <button onclick="openModal('Выбор тарифа', 'Тариф Годовой выбран. Перенаправление на оплату...')" class="w-full py-3.5 rounded-xl border border-violet-500/50 text-violet-400 font-bold uppercase tracking-wider hover:bg-violet-500/10 transition">
+                        Выбрать тариф
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Downloads Section -->
+    <section id="downloads" class="py-24 relative bg-black/40 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-cyan-400 font-bold text-xs uppercase tracking-widest mb-3">Клиентские приложения</h2>
+                <h3 class="text-3xl sm:text-4xl font-black text-white uppercase">Скачать Inspector VPN</h3>
+                <div class="w-20 h-1 bg-gradient-to-r from-cyan-500 to-violet-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                <div class="glass-panel p-6 rounded-2xl border border-gray-800 text-center hover:border-cyan-500/50 transition">
+                    <div class="text-4xl text-cyan-400 mb-4"><i class="fa-brands fa-windows"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-1">Windows</h4>
+                    <p class="text-xs text-gray-400 mb-6">Windows 10, 11 (64-bit)</p>
+                    <button onclick="openModal('Загрузка', 'Загрузка клиента для Windows началась.')" class="w-full py-2.5 rounded-xl bg-cyan-500/20 text-cyan-400 font-bold text-xs uppercase tracking-wider border border-cyan-500/30 hover:bg-cyan-500 hover:text-black transition">
+                        Скачать (.exe)
+                    </button>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border border-gray-800 text-center hover:border-violet-500/50 transition">
+                    <div class="text-4xl text-violet-400 mb-4"><i class="fa-brands fa-apple"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-1">macOS</h4>
+                    <p class="text-xs text-gray-400 mb-6">Apple Silicon & Intel</p>
+                    <button onclick="openModal('Загрузка', 'Загрузка клиента для macOS началась.')" class="w-full py-2.5 rounded-xl bg-violet-500/20 text-violet-400 font-bold text-xs uppercase tracking-wider border border-violet-500/30 hover:bg-violet-500 hover:text-black transition">
+                        App Store / DMG
+                    </button>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border border-gray-800 text-center hover:border-cyan-500/50 transition">
+                    <div class="text-4xl text-cyan-400 mb-4"><i class="fa-brands fa-android"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-1">Android</h4>
+                    <p class="text-xs text-gray-400 mb-6">Android 8.0 и выше</p>
+                    <button onclick="openModal('Загрузка', 'Загрузка APK файла началась.')" class="w-full py-2.5 rounded-xl bg-cyan-500/20 text-cyan-400 font-bold text-xs uppercase tracking-wider border border-cyan-500/30 hover:bg-cyan-500 hover:text-black transition">
+                        Google Play / APK
+                    </button>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border border-gray-800 text-center hover:border-violet-500/50 transition">
+                    <div class="text-4xl text-violet-400 mb-4"><i class="fa-brands fa-app-store-ios"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-1">iOS</h4>
+                    <p class="text-xs text-gray-400 mb-6">iPhone & iPad</p>
+                    <button onclick="openModal('Загрузка', 'Переход в App Store для загрузки приложения.')" class="w-full py-2.5 rounded-xl bg-violet-500/20 text-violet-400 font-bold text-xs uppercase tracking-wider border border-violet-500/30 hover:bg-violet-500 hover:text-black transition">
+                        App Store
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section id="faq" class="py-24 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-cyan-400 font-bold text-xs uppercase tracking-widest mb-3">База знаний</h2>
+                <h3 class="text-3xl sm:text-4xl font-black text-white uppercase">Часто задаваемые вопросы</h3>
+                <div class="w-20 h-1 bg-gradient-to-r from-cyan-500 to-violet-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="glass-panel rounded-2xl border border-gray-800 overflow-hidden">
+                    <button onclick="toggleFaq(1)" class="w-full p-6 text-left font-bold text-white flex justify-between items-center focus:outline-none">
+                        <span>Как начать пользоваться Inspector VPN?</span>
+                        <i class="fa-solid fa-chevron-down text-cyan-400 transition-transform duration-300" id="faq-icon-1"></i>
+                    </button>
+                    <div id="faq-content-1" class="hidden px-6 pb-6 text-gray-400 text-sm leading-relaxed border-t border-gray-800/60 pt-4">
+                        Выберите подходящий тарифный план, оплатите его удобным способом и получите персональный ключ доступа или файл конфигурации. Установите приложение на ваше устройство, вставьте ключ и нажмите кнопку подключения.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="glass-panel rounded-2xl border border-gray-800 overflow-hidden">
+                    <button onclick="toggleFaq(2)" class="w-full p-6 text-left font-bold text-white flex justify-between items-center focus:outline-none">
+                        <span>Сколько устройств можно подключить одновременно?</span>
+                        <i class="fa-solid fa-chevron-down text-cyan-400 transition-transform duration-300" id="faq-icon-2"></i>
+                    </button>
+                    <div id="faq-content-2" class="hidden px-6 pb-6 text-gray-400 text-sm leading-relaxed border-t border-gray-800/60 pt-4">
+                        Один приобретенный ключ Inspector VPN позволяет одновременно подключать до 10 устройств независимо от платформы (смартфоны, ПК, планшеты).
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-panel rounded-2xl border border-gray-800 overflow-hidden">
+                    <button onclick="toggleFaq(3)" class="w-full p-6 text-left font-bold text-white flex justify-between items-center focus:outline-none">
+                        <span>Влияет ли VPN на скорость интернета?</span>
+                        <i class="fa-solid fa-chevron-down text-cyan-400 transition-transform duration-300" id="faq-icon-3"></i>
+                    </button>
+                    <div id="faq-content-3" class="hidden px-6 pb-6 text-gray-400 text-sm leading-relaxed border-t border-gray-800/60 pt-4">
+                        Благодаря использованию высокоскоростных каналов до 10 Гбит/с и оптимизированным протоколам VLESS Reality, падение скорости практически незаметно (менее 2-5%), что позволяет комфортно смотреть видео в 4K и играть онлайн.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="glass-panel rounded-2xl border border-gray-800 overflow-hidden">
+                    <button onclick="toggleFaq(4)" class="w-full p-6 text-left font-bold text-white flex justify-between items-center focus:outline-none">
+                        <span>Ведете ли вы логи активности пользователей?</span>
+                        <i class="fa-solid fa-chevron-down text-cyan-400 transition-transform duration-300" id="faq-icon-4"></i>
+                    </button>
+                    <div id="faq-content-4" class="hidden px-6 pb-6 text-gray-400 text-sm leading-relaxed border-t border-gray-800/60 pt-4">
+                        Нет. Inspector VPN придерживается строгой политики нулевого логирования (Zero-Logs Policy). Мы физически не записываем историю посещений сайтов и сетевой трафик клиентов.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-gray-800 py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-violet-600 flex items-center justify-center text-black font-black">
+                    <i class="fa-solid fa-fingerprint text-sm"></i>
+                </div>
+                <span class="font-bold uppercase tracking-wider text-white text-sm">Inspector VPN © 2026</span>
+            </div>
+            <div class="flex space-x-6 text-sm text-gray-400">
+                <a href="#" onclick="openModal('Политика', 'Политика конфиденциальности гарантирует вашу анонимность.')" class="hover:text-cyan-400 transition">Конфиденциальность</a>
+                <a href="#" onclick="openModal('Условия', 'Использование сервиса регулируется пользовательским соглашением.')" class="hover:text-cyan-400 transition">Условия использования</a>
+                <a href="#" onclick="openModal('Поддержка', 'Telegram поддержка: @InspectorVPN_Support')" class="hover:text-cyan-400 transition">Поддержка Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Scripts -->
+    <script>
+        // Custom Modal Functions (replaces alert)
+        function openModal(title, message) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Smooth Scroll helper
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Interactive Connection State simulation
+        let isConnected = true;
+        function toggleConnection() {
+            isConnected = !isConnected;
+            const stateText = document.getElementById('connection-state-text');
+            const statusDot = document.getElementById('status-dot');
+            const orbButton = document.getElementById('orb-button');
+            const orbLabel = document.getElementById('orb-label');
+            const metricIp = document.getElementById('metric-ip');
+            const metricPing = document.getElementById('metric-ping');
+
+            if (isConnected) {
+                stateText.innerText = "Защищено · 45+ узлов";
+                statusDot.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
+                orbButton.className = "w-28 h-28 rounded-2xl bg-gradient-to-tr from-cyan-500 to-violet-600 flex flex-col items-center justify-center text-black shadow-2xl transition group-hover:scale-105";
+                orbLabel.innerText = "Подключено";
+                metricIp.innerText = "185.220.101.42";
+                metricPing.innerText = "14 мс";
+            } else {
+                stateText.innerText = "Отключено · Незащищено";
+                statusDot.className = "w-3 h-3 rounded-full bg-rose-500";
+                orbButton.className = "w-28 h-28 rounded-2xl bg-gray-800 border border-gray-700 flex flex-col items-center justify-center text-gray-400 shadow-2xl transition group-hover:scale-105";
+                orbLabel.innerText = "Отключено";
+                metricIp.innerText = "94.25.180.11";
+                metricPing.innerText = "-- мс";
+            }
+        }
+
+        //
